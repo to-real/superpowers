@@ -61,7 +61,7 @@ Each agent gets:
 - **Constraints:** Don't change other code
 - **Expected output:** Summary of what you found and fixed
 
-### 3. Dispatch in Parallel
+### 3. Dispatch in Parallel (Standard Task Mode)
 
 ```typescript
 // In Claude Code / AI environment
@@ -70,6 +70,28 @@ Task("Fix batch-completion-behavior.test.ts failures")
 Task("Fix tool-approval-race-conditions.test.ts failures")
 // All three run concurrently
 ```
+
+### 3b. Dispatch in Parallel (Team Mode)
+
+Use Team Mode only when capability checks pass and the user opts in.
+
+**Capability gate:**
+- `TeamCreate` available
+- `SendMessage` available
+- Shared `TaskList` tools available
+
+**If you're using this skill standalone:** run the capability check before offering Team Mode.
+In the normal workflow, this check happens in `writing-plans` execution handoff.
+
+**Team Mode pattern:**
+1. **Create** - Create one team for this run (`TeamCreate`)
+2. **Assign** - Create one team task per independent domain (`TaskCreate`)
+3. **Work** - Teammates execute in parallel and update shared state (`TaskUpdate` / `TaskList`)
+4. **Collect** - Read all outputs from shared task state (`TaskList` / `TaskGet`)
+5. **Integrate** - Apply changes, resolve conflicts, run full verification
+6. **Shutdown** - Clean up the team after integration (`TeamDelete` or equivalent)
+
+**Fallback rule:** If any team primitive fails repeatedly, fall back to Standard Task Mode for remaining domains.
 
 ### 4. Review and Integrate
 

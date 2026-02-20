@@ -27,6 +27,13 @@ git diff --stat {BASE_SHA}..{HEAD_SHA}
 git diff {BASE_SHA}..{HEAD_SHA}
 ```
 
+## Team Context (Optional)
+
+If this review is running in team mode, include:
+- Team task id: {TEAM_TASK_ID}
+- Reviewer teammate id/name: {REVIEWER_ID}
+- Shared task-state location: {TASKLIST_REF}
+
 ## Review Checklist
 
 **Code Quality:**

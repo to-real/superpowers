@@ -98,6 +98,25 @@ git commit -m "feat: add specific feature"
 
 After saving the plan, offer execution choice:
 
+**Capability gate before offering options:**
+- Check whether team primitives are available in this environment: `TeamCreate`, `SendMessage`, `TaskList`
+- If available, offer Team-Based mode as Option 3
+- If unavailable, offer the two existing options only
+
+**When team primitives are available:**
+
+**"Plan complete and saved to `docs/plans/<filename>.md`. Three execution options:**
+
+**1. Subagent-Driven (this session)** - I dispatch fresh subagent per task, review between tasks, fast iteration
+
+**2. Parallel Session (separate)** - Open new session with executing-plans, batch execution with checkpoints
+
+**3. Team-Based (parallel, this session)** - I create a team, assign independent tasks, and enforce review gates through shared `TaskList`
+
+**Which approach?"**
+
+**When team primitives are unavailable:**
+
 **"Plan complete and saved to `docs/plans/<filename>.md`. Two execution options:**
 
 **1. Subagent-Driven (this session)** - I dispatch fresh subagent per task, review between tasks, fast iteration
@@ -114,3 +133,9 @@ After saving the plan, offer execution choice:
 **If Parallel Session chosen:**
 - Guide them to open new session in worktree
 - **REQUIRED SUB-SKILL:** New session uses superpowers:executing-plans
+
+**If Team-Based chosen:**
+- Stay in this session and use team-aware execution flow
+- Use shared `TaskList` as task-state source of truth
+- Enforce spec compliance before code quality review on each task
+- **Fallback rule:** If any team tool call fails, immediately fall back to Subagent-Driven mode and continue with standard `Task` dispatch

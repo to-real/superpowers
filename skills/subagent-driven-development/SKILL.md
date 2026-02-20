@@ -16,7 +16,9 @@ digraph when_to_use {
     "Have implementation plan?" [shape=diamond];
     "Tasks mostly independent?" [shape=diamond];
     "Stay in this session?" [shape=diamond];
-    "subagent-driven-development" [shape=box];
+    "Team primitives available + user opts in?" [shape=diamond];
+    "subagent-driven-development (Standard Mode)" [shape=box];
+    "subagent-driven-development (Team Mode)" [shape=box];
     "executing-plans" [shape=box];
     "Manual execution or brainstorm first" [shape=box];
 
@@ -24,7 +26,9 @@ digraph when_to_use {
     "Have implementation plan?" -> "Manual execution or brainstorm first" [label="no"];
     "Tasks mostly independent?" -> "Stay in this session?" [label="yes"];
     "Tasks mostly independent?" -> "Manual execution or brainstorm first" [label="no - tightly coupled"];
-    "Stay in this session?" -> "subagent-driven-development" [label="yes"];
+    "Stay in this session?" -> "Team primitives available + user opts in?" [label="yes"];
+    "Team primitives available + user opts in?" -> "subagent-driven-development (Team Mode)" [label="yes"];
+    "Team primitives available + user opts in?" -> "subagent-driven-development (Standard Mode)" [label="no"];
     "Stay in this session?" -> "executing-plans" [label="no - parallel session"];
 }
 ```
@@ -35,7 +39,15 @@ digraph when_to_use {
 - Two-stage review after each task: spec compliance first, then code quality
 - Faster iteration (no human-in-loop between tasks)
 
-## The Process
+**Team Mode capability gate:**
+- `TeamCreate` available
+- `SendMessage` available
+- Shared `TaskList` tools available
+- Explicit user opt-in to Team Mode
+
+If capability checks fail (or user declines), use Standard Mode.
+
+## The Process (Standard Mode)
 
 ```dot
 digraph process {
@@ -81,6 +93,34 @@ digraph process {
     "Dispatch final code reviewer subagent for entire implementation" -> "Use superpowers:finishing-a-development-branch";
 }
 ```
+
+## Team Mode Process
+
+Use this mode only after the capability gate passes and the user explicitly chooses it.
+
+**Team lifecycle strategy:**
+1. Create one team at run start (`TeamCreate`)
+2. Reuse the same team across all tasks in this run
+3. Delete the team at run completion (`TeamDelete`)
+
+**Task tracking source of truth:**
+- In Team Mode, use shared `TaskList` only
+- Do not maintain parallel `TodoWrite` task state
+
+**Per-task Team Mode workflow:**
+1. Assign independent implementation task to teammate (`TaskCreate`)
+2. Wait for implementation result (`TaskList` / `TaskGet`)
+3. Dispatch spec compliance reviewer teammate and resolve issues until pass
+4. **Only after spec pass, dispatch code quality reviewer teammate**
+5. Resolve quality issues until pass
+6. Mark task complete in shared `TaskList`
+
+**Hard review gate:**
+- Never start code quality review before spec compliance is approved
+- Never mark a task complete while either reviewer has open issues
+
+**Fallback rule:**
+- If team primitives fail repeatedly, fall back to Standard Mode `Task` dispatch for remaining tasks
 
 ## Prompt Templates
 
@@ -211,6 +251,9 @@ Done!
 - Let implementer self-review replace actual review (both are needed)
 - **Start code quality review before spec compliance is ✅** (wrong order)
 - Move to next task while either review has open issues
+- In Team Mode, track tasks in both `TaskList` and `TodoWrite` at the same time (split-brain state)
+- In Team Mode, keep running the team after completion (always clean up with `TeamDelete`)
+- In Team Mode, assign tightly coupled tasks to parallel implementers without dependency control
 
 **If subagent asks questions:**
 - Answer clearly and completely

@@ -5,7 +5,7 @@ description: Use when completing tasks, implementing major features, or before m
 
 # Requesting Code Review
 
-Dispatch superpowers:code-reviewer subagent to catch issues before they cascade.
+Dispatch superpowers:code-reviewer reviewer flow to catch issues before they cascade.
 
 **Core principle:** Review early, review often.
 
@@ -29,9 +29,18 @@ BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
 HEAD_SHA=$(git rev-parse HEAD)
 ```
 
-**2. Dispatch code-reviewer subagent:**
+**2. Dispatch reviewer (mode-specific):**
 
-Use Task tool with superpowers:code-reviewer type, fill template at `code-reviewer.md`
+Use `code-reviewer.md` template and choose the dispatch path based on execution mode.
+
+**Standard subagent path:**
+- Use `Task` tool with `superpowers:code-reviewer`
+
+**Team mode path:**
+- Assign a reviewer teammate task (team `TaskCreate` / equivalent)
+- Send implementation context to reviewer teammate (`SendMessage` / equivalent)
+- Track reviewer status in shared `TaskList`
+- Treat reviewer output as blocking gate for task completion
 
 **Placeholders:**
 - `{WHAT_WAS_IMPLEMENTED}` - What you just built
@@ -45,6 +54,10 @@ Use Task tool with superpowers:code-reviewer type, fill template at `code-review
 - Fix Important issues before proceeding
 - Note Minor issues for later
 - Push back if reviewer is wrong (with reasoning)
+
+**Team mode review gate:**
+- Reviewer findings must be reflected in shared `TaskList`
+- Do not mark task complete until review gate is resolved
 
 ## Example
 
@@ -81,6 +94,12 @@ You: [Fix progress indicators]
 - Catch issues before they compound
 - Fix before moving to next task
 
+**Team Mode Development:**
+- Assign reviewer teammate per completed implementation task
+- Keep review state in shared `TaskList` (single source of truth)
+- Route review clarifications via teammate messaging
+- Resolve Critical/Important issues before task closure
+
 **Executing Plans:**
 - Review after each batch (3 tasks)
 - Get feedback, apply, continue
@@ -96,6 +115,8 @@ You: [Fix progress indicators]
 - Ignore Critical issues
 - Proceed with unfixed Important issues
 - Argue with valid technical feedback
+- In team mode, close tasks without reviewer state recorded in `TaskList`
+- In team mode, run parallel reviewer and implementer updates on the same file without coordination
 
 **If reviewer wrong:**
 - Push back with technical reasoning

@@ -57,9 +57,11 @@ while [[ $# -gt 0 ]]; do
             echo "  --help, -h           Show this help"
             echo ""
             echo "Tests:"
+            echo "  test-agent-teams-skill-content.sh       Static checks for Team Mode gates and fallback rules"
             echo "  test-subagent-driven-development.sh  Test skill loading and requirements"
             echo ""
             echo "Integration Tests (use --integration):"
+            echo "  test-agent-teams-integration.sh         Team mode integration + fallback checks"
             echo "  test-subagent-driven-development-integration.sh  Full workflow execution"
             exit 0
             ;;
@@ -73,11 +75,13 @@ done
 
 # List of skill tests to run (fast unit tests)
 tests=(
+    "test-agent-teams-skill-content.sh"
     "test-subagent-driven-development.sh"
 )
 
 # Integration tests (slow, full execution)
 integration_tests=(
+    "test-agent-teams-integration.sh"
     "test-subagent-driven-development-integration.sh"
 )
 

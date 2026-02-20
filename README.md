@@ -93,6 +93,14 @@ Start a new session in your chosen platform and ask for something that should tr
 
 **The agent checks for relevant skills before any task.** Mandatory workflows, not suggestions.
 
+## Agent Teams (Optional)
+
+Superpowers now supports an optional Team Mode for environments that expose Agent Teams primitives (for example `TeamCreate`, `SendMessage`, and shared `TaskList` tools).
+
+- Team Mode is capability-gated and user-opt-in.
+- If Team Mode is unavailable or team tool calls fail, workflows fall back to the existing subagent/Task flow.
+- Existing workflows remain the default and are backward compatible.
+
 ## What's Inside
 
 ### Skills Library
@@ -107,13 +115,13 @@ Start a new session in your chosen platform and ask for something that should tr
 **Collaboration** 
 - **brainstorming** - Socratic design refinement
 - **writing-plans** - Detailed implementation plans
-- **executing-plans** - Batch execution with checkpoints
-- **dispatching-parallel-agents** - Concurrent subagent workflows
+- **executing-plans** - Batch execution with checkpoints (optional Team Mode for within-batch parallelism)
+- **dispatching-parallel-agents** - Concurrent subagent workflows (optional Team Mode when available)
 - **requesting-code-review** - Pre-review checklist
 - **receiving-code-review** - Responding to feedback
 - **using-git-worktrees** - Parallel development branches
 - **finishing-a-development-branch** - Merge/PR decision workflow
-- **subagent-driven-development** - Fast iteration with two-stage review (spec compliance, then code quality)
+- **subagent-driven-development** - Fast iteration with two-stage review (spec compliance, then code quality), with optional Team Mode
 
 **Meta**
 - **writing-skills** - Create new skills following best practices (includes testing methodology)

@@ -1,5 +1,33 @@
 # Superpowers Release Notes
 
+## Unreleased
+
+### Added
+
+**Optional Agent Teams execution paths (capability-gated)**
+
+- Added Team Mode branches to core execution skills:
+  - `writing-plans`
+  - `dispatching-parallel-agents`
+  - `subagent-driven-development`
+  - `executing-plans`
+- Team Mode requires team primitives and explicit user opt-in.
+- When Team Mode is unavailable, existing workflows continue unchanged.
+
+### Changed
+
+**Team fallback and review gate semantics**
+
+- Documented explicit fallback behavior from Team Mode to standard `Task`/subagent flow on repeated team primitive failures.
+- Clarified team task-state source of truth (`TaskList`) to avoid split-brain tracking.
+- Reinforced review ordering: spec compliance before code quality.
+
+### Tests
+
+- Added `tests/claude-code/test-agent-teams-skill-content.sh` for static Team Mode guard checks.
+- Added `tests/claude-code/test-agent-teams-integration.sh` (integration, environment-gated).
+- Updated `tests/claude-code/run-skill-tests.sh` to include new Team tests in fast and `--integration` suites.
+
 ## v4.3.0 (2026-02-12)
 
 This fix should dramatically improve superpowers skills compliance and should reduce the chances of Claude entering its native plan mode unintentionally.
